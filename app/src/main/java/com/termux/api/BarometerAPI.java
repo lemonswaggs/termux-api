@@ -40,7 +40,7 @@ class BarometerAPI {
                     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
                     }
-                }, sm.getDefaultSensor(Sensor.TYPE_PRESSURE), SensorManager.SENSOR_DELAY_UI);
+                }, sm.getDefaultSensor(Sensor.TYPE_PRESSURE), SensorManager.SENSOR_DELAY_FASTEST);
 
                 final Looper looper = Looper.myLooper();
                 new Thread() {

@@ -118,6 +118,9 @@ public class TermuxApiReceiver extends BroadcastReceiver {
                     WifiAPI.onReceiveWifiScanInfo(this, context, intent);
                 }
                 break;
+            case "Barometer":
+                BarometerAPI.onReceive(this, context, intent);
+                break;
             default:
                 TermuxApiLogger.error("Unrecognized 'api_method' extra: '" + apiMethod + "'");
         }

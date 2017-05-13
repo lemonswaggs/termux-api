@@ -23,6 +23,8 @@ public class NotificationAPI {
     public static final String BIN_SH = "/data/data/com.termux/files/usr/bin/sh";
     private static final String EXTRA_EXECUTE_IN_BACKGROUND = "com.termux.execute.background";
 
+    private static boolean sticky;
+
     /**
      * Show a notification. Driven by the termux-show-notification script.
      */
@@ -60,16 +62,23 @@ public class NotificationAPI {
 
         String actionExtra = intent.getStringExtra("action");
 
-        String id = intent.getStringExtra("id");
-        if (id == null) id = UUID.randomUUID().toString();
-        final String notificationId = id;
-
         final Notification.Builder notification = new Notification.Builder(context);
         notification.setSmallIcon(R.drawable.ic_event_note_black_24dp);
         notification.setColor(0xFF000000);
         notification.setContentTitle(title);
         notification.setPriority(priority);
         notification.setWhen(System.currentTimeMillis());
+
+        String id = intent.getStringExtra("id");
+
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+            sticky = false;
+        } else {
+            sticky = intent.getBooleanExtra("sticky", false);
+        }
+
+        final String notificationId = id;
 
         if (ledColor != 0) {
             notification.setLights(ledColor, ledOnMs, ledOffMs);
@@ -152,7 +161,9 @@ public class NotificationAPI {
                         notification.setContentText(inputString);
                     }
                 }
-                manager.notify(notificationId, 0, notification.build());
+                Notification nt = notification.build();
+                if (sticky) nt.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+                manager.notify(notificationId, 0, nt);
             }
         });
     }
